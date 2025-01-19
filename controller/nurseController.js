@@ -42,4 +42,20 @@ const getNurses = async (req, res) => {
   }
 };
 
-export { addNurse, getNurses, deleteNurse };
+const loginNurse = async (req, res) => {
+  const { id, password } = req.body;
+
+  try {
+    // Find the nurse by ID and mobile number
+    const nurse = await Nurse.findOne({ nurseId: id, mobileOrEmail: password });
+    if (nurse) {
+      res.status(200).json({ message: 'Login successful', nurse });
+    } else {
+      res.status(401).json({ message: 'Invalid Patient ID or Date of Birth' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to log in', error: error.message });
+  }
+};
+
+export { addNurse, getNurses, deleteNurse, loginNurse };

@@ -45,4 +45,21 @@ const deletePatient = async (req, res) => {
   }
 }
 
-export { addPatient, getPatient, deletePatient };
+// Login patient
+const loginPatient = async (req, res) => {
+  const { id, password } = req.body;
+
+  try {
+    // Find the patient by ID and Date of Birth
+    const patient = await Patient.findOne({ patientId: id, dateofBirth: password });
+    if (patient) {
+      res.status(200).json({ message: 'Login successful', patient });
+    } else {
+      res.status(401).json({ message: 'Invalid Patient ID or Date of Birth' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to log in', error: error.message });
+  }
+};
+
+export { addPatient, getPatient, deletePatient, loginPatient };
