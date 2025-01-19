@@ -5,6 +5,7 @@ import cors from "cors";
 import adminRoutes from "./routes/adminRoutes.js";
 import nurseRoutes from "./routes/nurseRoutes.js";
 import patientRoutes from "./routes/patientRoutes.js";
+import requestRoutes from "./routes/requestRoutes.js";
 import connectDB from "./services/db.js";
 
 dotenv.config(); 
@@ -25,6 +26,7 @@ app.use(cors({
 app.use("/api/nurses", nurseRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/requests', requestRoutes);
 
 
 const PORT = process.env.PORT || 5000;
