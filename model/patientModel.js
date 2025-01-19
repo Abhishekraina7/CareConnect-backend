@@ -10,6 +10,11 @@ const patientSchema = new Schema({
     type: String,
     required: true,
   },
+  dateofBirth: {
+    type: String,
+    required: true,
+  },
+
   mobile: {
     type: String,
     required: true,

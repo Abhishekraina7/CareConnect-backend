@@ -7,4 +7,5 @@ router.get('/', getPatient);
 router.delete('/:patientId', deletePatient);
 router.post('/login', loginPatient);
 
+
 export default router;
