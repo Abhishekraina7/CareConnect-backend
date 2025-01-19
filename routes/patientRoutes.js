@@ -6,4 +6,5 @@ router.post('/', addPatient);
 router.get('/', getPatient);
 router.delete('/:patientId', deletePatient);
 
+
 export default router;
