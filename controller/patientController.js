@@ -1,12 +1,12 @@
 import Patient from "../model/patientModel.js";
-
+import jwt from "jsonwebtoken";
 // add patients
 
 const addPatient = async (req, res) => {
-  const { patientId, name, dateofBirth,mobile, diagnosis, wardBedNo, admitDate } = req.body;
+  const { patientId, name, dateofBirth, mobile, diagnosis, wardBedNo, admitDate } = req.body;
 
   try {
-    const newPatient = new Patient({ patientId, name,dateofBirth, mobile, diagnosis, wardBedNo, admitDate });
+    const newPatient = new Patient({ patientId, name, dateofBirth, mobile, diagnosis, wardBedNo, admitDate });
     await newPatient.save();
     res.status(201).json({ message: 'Patient added successfully', patient: newPatient });
   } catch (error) {
@@ -47,19 +47,31 @@ const deletePatient = async (req, res) => {
 
 // Login patient
 const loginPatient = async (req, res) => {
+  const key = 'Patient_huun_mai';
   const { id, password } = req.body;
 
   try {
     // Find the patient by ID and Date of Birth
-    const patient = await Patient.findOne({ patientId: id, dateofBirth: password });
+    const patient = await Patient.findOne({ patientId: id });
     if (patient) {
-      res.status(200).json({ message: 'Login successful', patient });
-    } else {
-      res.status(401).json({ message: 'Invalid Patient ID or Date of Birth' });
+      const isPasswordValid = password === patient.dateofBirth;
+      if (isPasswordValid) {
+        //generate token on successful login
+        const patienttoken = jwt.sign({ uniqueId: patient.id }, key, { expiresIn: '7d' });
+
+        res.status(200).json({ message: 'Login successful', patienttoken, patient });
+      } else {
+        res.status(401).json({ message: 'Invalid Patient ID or Date of Birth' });
+      }
     }
-  } catch (error) {
+    else {
+      res.status(404).json({ message: 'Patient not found' });
+    }
+  }
+  catch (error) {
     res.status(500).json({ message: 'Failed to log in', error: error.message });
   }
-};
+}
+
 
 export { addPatient, getPatient, deletePatient, loginPatient };

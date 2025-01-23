@@ -1,4 +1,7 @@
 import Nurse from "../model/nurseModel.js";
+import jwt from "jsonwebtoken";
+
+
 
 // Add a new nurse
 const addNurse = async (req, res) => {
@@ -43,17 +46,28 @@ const getNurses = async (req, res) => {
 };
 
 const loginNurse = async (req, res) => {
+  const key = 'Nurse_huun_mai';
   const { id, password } = req.body;
-
   try {
     // Find the nurse by ID and mobile number
-    const nurse = await Nurse.findOne({ nurseId: id, mobileOrEmail: password });
+    const nurse = await Nurse.findOne({ nurseId: id });
     if (nurse) {
-      res.status(200).json({ message: 'Login successful', nurse });
+      const isPasswordValid = password === nurse.mobileOrEmail;
+      if (isPasswordValid) {
+        // Generate token on succesfull login
+        const nursetoken = jwt.sign({ uniqueId: nurse.id }, key, { expiresIn: '7d' });
+
+        // Send response with token
+        res.status(200).json({ message: 'Login successful', nursetoken, nurse });
+
+      } else {
+        res.status(401).json({ message: 'Invalid Credentials, please try again' });
+      }
     } else {
-      res.status(401).json({ message: 'Invalid Patient ID or Date of Birth' });
+      res.status(404).json({ message: 'Nurse not found' });
     }
-  } catch (error) {
+  }
+  catch (error) {
     res.status(500).json({ message: 'Failed to log in', error: error.message });
   }
 };
